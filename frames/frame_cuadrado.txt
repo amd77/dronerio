@@ -1,0 +1,14 @@
+Este diseño no ha sido impreso ninguna vez.
+
+Durante su construccion, se ha intentando usar conceptos de orientacion a
+objetos (what else!) aunque openscad tiene dificultades en ese tema.
+
+El gran problema [Preserve "holes" in module objects], ya que cuando programas
+pieza a pieza las diseñas con sus huecos, y cuando las solapas, los huecos se
+tapan con la materia de las demas piezas. Una solución es pasar un parámetro a
+tus modulos diciendo si quieres fill o holes, y poner esas llamadas en un
+difference de un nivel superior.
+
+http://lists.openscad.org/pipermail/discuss_lists.openscad.org/2015-May/002086.html
+
+http://www.tridimake.com/2014/11/how-to-use-openscad-4-children-and.html
