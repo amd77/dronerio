@@ -1,15 +1,13 @@
 SLIC3R_FLAGS:=--load frame_cuadrado.ini
 SCAD_IMG_FLAGS:=--imgsize=1024,700 --projection=p --camera=0,0,0,60,0,14,80 --render 
-SCAD_IMG_FLAGS:=--imgsize=1024,700 --projection=p --camera=0,0,0,60,0,14,1000
+SCAD_IMG_FLAGS:=--imgsize=1024,700 --projection=p
 
-all: frame_cuadrado frame_cuadrado_trozo
+TARGETS=$(patsubst %.scad, %, $(wildcard *.scad))
 
-frame_cuadrado: frame_cuadrado.gcode frame_cuadrado.png
-
-frame_cuadrado_trozo: frame_cuadrado_trozo.gcode frame_cuadrado_trozo.png
+all: $(patsubst %, %.png, $(TARGETS)) $(patsubst %, %.gcode, $(TARGETS))
 
 clean:
-	rm -f *.gcode *.png
+	rm -f *.gcode *.png *.stl
 
 %.stl: %.scad
 	openscad -o $@ $<
