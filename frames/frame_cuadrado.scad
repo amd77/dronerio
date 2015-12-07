@@ -1,6 +1,6 @@
 N=4;
 $fn=20;
-Off=0.1;
+Off=1;
 
 module distribuye_rotando(radio, n) {
 	for (i=[0:n-1]) rotate(i*360/n) translate([radio, 0, 0]) children();
@@ -8,16 +8,16 @@ module distribuye_rotando(radio, n) {
 
 module montura(modo, TotalDia, canteada=true) {
 	// diametro del hueco del centro 
-	CentroDia=0.8;
+	CentroDia=8;
 	// diametro del agujero de los 4 tornillos
-	TornilloDia=0.3;
+	TornilloDia=3;
 	// distancia entre dos aguneros de tornillos
-	TornilloDistancia=1.4;
+	TornilloDistancia=14;
 	// altura total de la montura
-	Altura=0.1;
+	Altura=1;
 	
-	PerfilAlto=0.5;
-	PerfilAncho=0.1;
+	PerfilAlto=5;
+	PerfilAncho=1;
 
 	if (modo == "crea") {
 		// base plana de la montura del motor
@@ -28,15 +28,15 @@ module montura(modo, TotalDia, canteada=true) {
 			translate([0, 0, PerfilAlto/2])
 			cylinder(r=TotalDia/2,h=PerfilAlto, center=true);
 	
-			translate([0, 0, 0.25])
+			translate([0, 0, 2.5])
 			cylinder(r=TotalDia/2-PerfilAncho,h=PerfilAlto+2*Off, center=true);
 
 			if (canteada) {
 				// un plano inclinado para cortar inclinadamente
 				rotate([0, 0, 180/N])
 				rotate([0, 15, 0])
-		      translate([0, 0, 4*PerfilAlto+0.3])
-				cube([TotalDia, TotalDia, 4], center=true);
+		      translate([0, 0, 4*PerfilAlto+3])
+				cube([TotalDia, TotalDia, 40], center=true);
 			}
 		}
 	}
@@ -51,9 +51,9 @@ module montura(modo, TotalDia, canteada=true) {
 }
 
 module patas(modo, MontaTotalDia) {
-	Alto=0.5;
-	Diametro=0.4;
-	Agujero=0.1;
+	Alto=5;
+	Diametro=4;
+	Agujero=1;
 	beta=180/N;
 	gamma=90-180/N;
 	if (modo == "crea") {
@@ -71,10 +71,10 @@ module patas(modo, MontaTotalDia) {
 }
 
 module cable(modo, alto, base) {
-   DiametroIntermedio=0.7;
-	DiametroExterior=0.9;
-	Agujero=0.5;
-	Alto=0.2;
+   DiametroIntermedio=7;
+	DiametroExterior=9;
+	Agujero=5;
+	Alto=2;
 
 	if (modo == "crea") {
 		translate([0, 0, alto-Alto/2])
@@ -89,10 +89,10 @@ module cable(modo, alto, base) {
 
 module lados(modo, radio, MontaTotalDia) {
 	// dimensiones de cada lado
-	LadoAncho=1.0;
-	LadoAlto=0.1;
-	LadoPerfilAncho=0.2;
-	LadoPerfilAlto=0.5;
+	LadoAncho=10;
+	LadoAlto=1;
+	LadoPerfilAncho=2;
+	LadoPerfilAlto=5;
    lado=radio*sqrt(2*(1-cos(360/N)));
    apotema=radio*cos(360/N/2);
 	lado2=lado-MontaTotalDia*0.9;
@@ -115,10 +115,10 @@ module lados(modo, radio, MontaTotalDia) {
 
 module diagonales(modo, radio, MontaTotalDia) {
 	// dimensiones de cada diagonal
-	DiagonalAlto=0.1;
-	DiagonalAncho=1.0;
-	DiagonalPerfilAncho=0.2;
-	DiagonalPerfilAlto=0.5;
+	DiagonalAlto=1;
+	DiagonalAncho=10;
+	DiagonalPerfilAncho=2;
+	DiagonalPerfilAlto=5;
 
 	if (modo == "crea") {
 		// parte plana diagonales
@@ -151,7 +151,7 @@ module rotate_trans(radio) {
 	children();
 }
 
-module frame(modo, radio=9, MontaTotalDia=2.5) {
+module frame(modo, radio=90, MontaTotalDia=25) {
 	if (modo == "crea") {
 		for_rotate() {
 			lados("crea", radio, MontaTotalDia);
@@ -171,5 +171,5 @@ module frame(modo, radio=9, MontaTotalDia=2.5) {
 
 difference() { frame("crea"); frame("hueco"); }
 //difference() { patas("crea"); patas("hueco"); }
-//difference() { cable("crea", 0.5); cable("hueco", 0.1); }
-//difference() { montura("crea", 2); montura("hueco", 2); }
+//difference() { cable("crea", 5); cable("hueco", 1); }
+//difference() { montura("crea", 20); montura("hueco", 20); }
