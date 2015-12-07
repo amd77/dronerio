@@ -1,15 +1,15 @@
-TARGETS:=frame_cuadrado.stl frame_cuadrado_3.png frame_cuadrado_4.png frame_cuadrado_6.png
+TARGETS:=frame_cuadrado.gcode frame_cuadrado_trozo.gcode frame_cuadrado.png
+SLIC3R:=frame_cuadrado.ini
+SCAD_IMG_FLAGS:=--imgsize=1024,700 --projection=p --camera=0,0,0,60,0,14,80 --render 
 
 all: $(TARGETS)
 
 clean:
 	rm -f $(TARGETS)
 
-frame_cuadrado.stl: frame_cuadrado.scad
+%.stl: %.scad
 	openscad -o $@ $<
-frame_cuadrado_3.png: frame_cuadrado.scad
-	openscad -D N=3 -o $@ --imgsize=1024,700 --projection=p --camera=0,0,0,60,0,14,80 --render $<
-frame_cuadrado_4.png: frame_cuadrado.scad
-	openscad -D N=4 -o $@ --imgsize=1024,700 --projection=p --camera=0,0,0,60,0,14,80 --render $<
-frame_cuadrado_6.png: frame_cuadrado.scad
-	openscad -D N=6 -o $@ --imgsize=1024,700 --projection=p --camera=0,0,0,60,0,14,80 --render $<
+%.gcode: %.stl
+	slic3r --load $(SLIC3R) $< -o $@
+%.png: %.scad
+	openscad -o $@ $(SCAD_IMG_FLAGS) $<
