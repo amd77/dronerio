@@ -21,8 +21,13 @@ module montura(modo, TotalDia, canteada=true) {
 
 	if (modo == "crea") {
 		// base plana de la montura del motor
-		cylinder(r=TotalDia/2,h=Altura, center=true);
+        hull() {
+            cylinder(r=TotalDia/2,h=Altura, center=true);
 
+            rotate([0, 0, 180/N])
+            translate([-TotalDia/3, 0, 0])
+            cylinder(r=TotalDia/2, h=Altura, center=true);
+        }
 		// anillo alrededor del motor
 		difference() {
 			translate([0, 0, PerfilAlto/2])
@@ -35,7 +40,7 @@ module montura(modo, TotalDia, canteada=true) {
 				// un plano inclinado para cortar inclinadamente
 				rotate([0, 0, 180/N])
 				rotate([0, 15, 0])
-		      translate([0, 0, 4*PerfilAlto+3])
+		        translate([0, 0, 4*PerfilAlto+3])
 				cube([TotalDia, TotalDia, 40], center=true);
 			}
 		}
@@ -47,6 +52,10 @@ module montura(modo, TotalDia, canteada=true) {
 	   // huecos 4 tornillos
 		distribuye_rotando(TornilloDistancia/2, 4)
 	   cylinder(r=TornilloDia/2,h=Altura+2*Off, center=true);
+            rotate([0, 0, 180/N])
+            rotate([0, 70, 0])
+            translate([-4, 0, -9])
+            cube([2.5, 7, 20], center=true);
 	}
 }
 
@@ -71,10 +80,9 @@ module patas(modo, MontaTotalDia) {
 }
 
 module cable(modo, alto, base) {
-   DiametroIntermedio=7;
-	DiametroExterior=9;
-	Agujero=5;
-	Alto=2;
+	DiametroExterior=13;
+	Agujero=10;
+	Alto=alto;
 
 	if (modo == "crea") {
 		translate([0, 0, alto-Alto/2])
@@ -108,10 +116,24 @@ module lados(modo, radio, MontaTotalDia) {
 		rotate(90)
 		translate([-lado2/2, -LadoPerfilAncho/2, LadoPerfilAlto/2])
 		cube([lado2, LadoPerfilAncho, LadoPerfilAlto]);
+
 	}
 	if (modo == "hueco") {
 	}
 }
+
+module multiwii(modo, radio, altura) {
+    rotate(45)
+    translate([radio, 0, altura/2])  {
+        if (modo == "crea") {
+            cylinder(d=5, h=altura, center=true);
+        }
+        if (modo == "hueco") {
+            cylinder(d=3, h=altura+2, center=true);
+        }
+    }
+}
+
 
 module diagonales(modo, radio, MontaTotalDia) {
 	// dimensiones de cada diagonal
@@ -152,21 +174,13 @@ module rotate_trans(radio) {
 }
 
 module frame(modo, radio=90, MontaTotalDia=25) {
-	if (modo == "crea") {
-		for_rotate() {
-			lados("crea", radio, MontaTotalDia);
-			diagonales("crea", radio, MontaTotalDia);
-			rotate_trans(radio) patas("crea", MontaTotalDia);
-			rotate_trans(radio) montura("crea", MontaTotalDia);
-		}
-	}
-	if (modo == "hueco") {
-		for_rotate() {
-			rotate_trans(radio) patas("hueco", MontaTotalDia);
-			rotate_trans(radio) montura("hueco", MontaTotalDia);
-		}
-		diagonales("hueco", radio, MontaTotalDia);
-	}
+    for_rotate() {
+        lados(modo, radio, MontaTotalDia);
+        multiwii(modo, 25.1, 10);
+        diagonales(modo, radio, MontaTotalDia);
+        rotate_trans(radio) patas(modo, MontaTotalDia);
+        rotate_trans(radio) montura(modo, MontaTotalDia);
+    }
 }
 
 difference() { frame("crea"); frame("hueco"); }
