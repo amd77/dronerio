@@ -22,36 +22,36 @@ module montura(modo, TotalDia, canteada=true) {
 	if (modo == "crea") {
 		// base plana de la montura del motor
         hull() {
-            cylinder(r=TotalDia/2,h=Altura, center=true);
+            cylinder(d=TotalDia,h=Altura, center=true);
 
             rotate([0, 0, 180/N])
             translate([-TotalDia/3, 0, 0])
-            cylinder(r=TotalDia/2, h=Altura, center=true);
+            cylinder(d=TotalDia, h=Altura, center=true);
         }
 		// anillo alrededor del motor
 		difference() {
 			translate([0, 0, PerfilAlto/2])
-			cylinder(r=TotalDia/2,h=PerfilAlto, center=true);
+			cylinder(d=TotalDia,h=PerfilAlto, center=true);
 	
 			translate([0, 0, 2.5])
-			cylinder(r=TotalDia/2-PerfilAncho,h=PerfilAlto+2*Off, center=true);
+			cylinder(d=TotalDia-2*PerfilAncho,h=PerfilAlto+2*Off, center=true);
 
 			if (canteada) {
 				// un plano inclinado para cortar inclinadamente
 				rotate([0, 0, 180/N])
-				rotate([0, 15, 0])
-		        translate([0, 0, 4*PerfilAlto+3])
+				rotate([0, 10, 0])
+		        translate([0, 0, 4*PerfilAlto+4])
 				cube([TotalDia, TotalDia, 40], center=true);
 			}
 		}
 	}
 	if (modo == "hueco") {
 	   // hueco central
-	   cylinder(r=CentroDia/2,h=Altura+2*Off, center=true);
+	   cylinder(d=CentroDia,h=Altura+2*Off, center=true);
 
 	   // huecos 4 tornillos
 		distribuye_rotando(TornilloDistancia/2, 4)
-	   cylinder(r=TornilloDia/2,h=Altura+2*Off, center=true);
+	   cylinder(d=TornilloDia,h=Altura+2*Off, center=true);
             rotate([0, 0, 180/N])
             rotate([0, 70, 0])
             translate([-4, 0, -9])
@@ -69,13 +69,13 @@ module patas(modo, MontaTotalDia) {
 		for (angulo=[-1,1])
 			rotate(beta+gamma*angulo)
 		   translate([-MontaTotalDia/2, 0, Alto/2])
-			cylinder(r=Diametro/2, h=Alto, center=true);
+			cylinder(d=Diametro, h=Alto, center=true);
 	}
 	if (modo == "hueco") {
 		for (angulo=[-1,1])
 			rotate(beta+gamma*angulo)
 	   	translate([-MontaTotalDia/2, 0, Alto/2])
-			cylinder(r=Agujero/2, h=Alto+2*Off, center=true);
+			cylinder(d=Agujero, h=Alto+2*Off, center=true);
 	}
 }
 
@@ -86,12 +86,12 @@ module cable(modo, alto, base) {
 
 	if (modo == "crea") {
 		translate([0, 0, alto-Alto/2])
-		cylinder(r=DiametroExterior/2, h=Alto, center=true);
+		cylinder(d=DiametroExterior, h=Alto, center=true);
 	}
 	if (modo == "hueco") {
 		// taladro central
 		translate([0, 0, alto/2])
-		cylinder(r=Agujero/2, h=alto+2*Off, center=true);
+		cylinder(d=Agujero, h=alto+2*Off, center=true);
 	}
 }
 
@@ -101,8 +101,8 @@ module lados(modo, radio, MontaTotalDia) {
 	LadoAlto=1;
 	LadoPerfilAncho=2;
 	LadoPerfilAlto=5;
-   lado=radio*sqrt(2*(1-cos(360/N)));
-   apotema=radio*cos(360/N/2);
+    lado=radio*sqrt(2*(1-cos(360/N)));
+    apotema=radio*cos(360/N/2);
 	lado2=lado-MontaTotalDia*0.9;
 	if (modo == "crea") {
 		// parte plana cuadrada exterior
@@ -111,7 +111,7 @@ module lados(modo, radio, MontaTotalDia) {
 		translate([-lado/2, -LadoAncho/2, 0])
 		cube([lado, LadoAncho, LadoAlto]);
 
-      // nervio superior cuadrado exterior
+        // nervio superior cuadrado exterior
 		translate([apotema, 0, -LadoPerfilAlto/2])
 		rotate(90)
 		translate([-lado2/2, -LadoPerfilAncho/2, LadoPerfilAlto/2])
@@ -168,7 +168,7 @@ module for_rotate() {
 
 module rotate_trans(radio) {
 	rotate(180/N) 
-   translate([radio, 0, 0])
+    translate([radio, 0, 0])
 	rotate(-180/N)
 	children();
 }
