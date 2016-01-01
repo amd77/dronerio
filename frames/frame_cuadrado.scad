@@ -123,13 +123,16 @@ module lados(modo, radio, MontaTotalDia) {
 }
 
 module multiwii(modo, radio, altura) {
+    agujero=1.5;
+    soporte=1.5;
+    exterior=soporte*2+agujero;
     rotate(45)
     translate([radio, 0, altura/2])  {
         if (modo == "crea") {
-            cylinder(d=5, h=altura, center=true);
+            cylinder(d=exterior, h=altura, center=true);
         }
         if (modo == "hueco") {
-            cylinder(d=3, h=altura+2, center=true);
+            cylinder(d=agujero, h=altura+2, center=true);
         }
     }
 }
