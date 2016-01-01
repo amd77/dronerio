@@ -1,5 +1,5 @@
 N=4;
-$fn=20;
+$fn=30;
 Off=1;
 
 module distribuye_rotando(radio, n) {
