@@ -6,6 +6,16 @@ module distribuye_rotando(radio, n) {
 	for (i=[0:n-1]) rotate(i*360/n) translate([radio, 0, 0]) children();
 }
 
+module aspa(modo, diametro=127, elevacion=21, altura=10) {
+    translate([0, 0, elevacion+altura/2]) {
+        if (modo == "crea") {
+            %cylinder(d=diametro, h=altura, center=true);
+        }
+        if (modo == "hueco") {
+        }
+    }
+}
+
 module montura(modo, TotalDia, canteada=true) {
 	// diametro del hueco del centro 
 	CentroDia=8;
@@ -176,13 +186,14 @@ module rotate_trans(radio) {
 	children();
 }
 
-module frame(modo, radio=90, MontaTotalDia=25) {
+module frame(modo, radio=95, MontaTotalDia=25, hacer_aspa=false) {
     for_rotate() {
         lados(modo, radio, MontaTotalDia);
         multiwii(modo, 25.1, 10);
         diagonales(modo, radio, MontaTotalDia);
         rotate_trans(radio) patas(modo, MontaTotalDia);
         rotate_trans(radio) montura(modo, MontaTotalDia);
+        if (hacer_aspa) rotate_trans(radio) aspa(modo);
     }
 }
 
