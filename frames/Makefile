@@ -1,4 +1,4 @@
-SLIC3R_FLAGS:=--load bq_hephestos_2_PLA_high_quality.ini
+SLIC3R_FLAGS:=--load config.ini
 SCAD_IMG_FLAGS:=--imgsize=1024,700 --projection=p --camera=0,0,0,60,0,14,80 --render 
 SCAD_IMG_FLAGS:=--imgsize=1024,700 --projection=p
 
