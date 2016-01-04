@@ -72,19 +72,19 @@ module montura(modo, TotalDia, canteada=true) {
 module patas(modo, MontaTotalDia) {
 	Alto=5;
 	Diametro=4;
-	Agujero=1;
+	Agujero=1.5;
 	beta=180/N;
 	gamma=90-180/N;
 	if (modo == "crea") {
 		for (angulo=[-1,1])
 			rotate(beta+gamma*angulo)
-		   translate([-MontaTotalDia/2, 0, Alto/2])
+		    translate([-MontaTotalDia/2-Diametro/3, 0, Alto/2])
 			cylinder(d=Diametro, h=Alto, center=true);
 	}
 	if (modo == "hueco") {
 		for (angulo=[-1,1])
 			rotate(beta+gamma*angulo)
-	   	translate([-MontaTotalDia/2, 0, Alto/2])
+	   	    translate([-MontaTotalDia/2-Diametro/3, 0, Alto/2])
 			cylinder(d=Agujero, h=Alto+2*Off, center=true);
 	}
 }
