@@ -16,7 +16,7 @@ module aspa(modo, diametro=127, elevacion=21, altura=10) {
     }
 }
 
-module montura(modo, TotalDia, canteada=true) {
+module montura(modo, TotalDia, canteada=false) {
 	// diametro del hueco del centro 
 	CentroDia=8;
 	// diametro del agujero de los 4 tornillos
@@ -78,14 +78,16 @@ module patas(modo, MontaTotalDia) {
 	if (modo == "crea") {
 		for (angulo=[-1,1])
 			rotate(beta+gamma*angulo)
-		    translate([-MontaTotalDia/2-Diametro/3, 0, Alto/2])
-			cylinder(d=Diametro, h=Alto, center=true);
+		    translate([-MontaTotalDia/1.6-Diametro/3, 0, Alto/2])
+			//cylinder(d=Diametro, h=Alto, center=true);
+            cylinder_with_hole(modo, Alto, Diametro*1.5, Diametro, Agujero);
 	}
 	if (modo == "hueco") {
 		for (angulo=[-1,1])
 			rotate(beta+gamma*angulo)
-	   	    translate([-MontaTotalDia/2-Diametro/3, 0, Alto/2])
-			cylinder(d=Agujero, h=Alto+2*Off, center=true);
+	   	    translate([-MontaTotalDia/1.6-Diametro/3, 0, Alto/2])
+			//cylinder(d=Agujero, h=Alto+2*Off, center=true);
+            cylinder_with_hole(modo, Alto, Diametro*1.5, Diametro, Agujero);
 	}
 }
 
@@ -134,19 +136,12 @@ module lados(modo, radio, MontaTotalDia) {
 
 module multiwii(modo, radio, altura) {
     agujero=1.5;
-    soporte=1.5;
+    soporte=1.3;
     exterior=soporte*2+agujero;
     rotate(45)
-    translate([radio, 0, altura/2])  {
-        if (modo == "crea") {
-            cylinder(d=exterior, h=altura, center=true);
-        }
-        if (modo == "hueco") {
-            cylinder(d=agujero, h=altura+2, center=true);
-        }
-    }
+    translate([radio, 0, altura/2])
+    cylinder_with_hole(modo, h=altura, r1=exterior*1.25, r2=exterior, hole=agujero);
 }
-
 
 module diagonales(modo, radio, MontaTotalDia) {
 	// dimensiones de cada diagonal
@@ -248,11 +243,11 @@ module pata(modo, angle=10, cosa=12) {
 module frame(modo, radio=95, MontaTotalDia=25, hacer_aspa=false) {
     for_rotate() {
         lados(modo, radio, MontaTotalDia);
-        multiwii(modo, 25.1, 10);
+        multiwii(modo, 25.1, 5);
         diagonales(modo, radio, MontaTotalDia);
-        rotate_trans(radio) pata(modo, angle=17);
-        rotate_trans(radio) translate([-28, -3, 0]) rotate([0, 0, 120]) pata(modo, angle=24);
-        rotate_trans(radio) translate([-3, -28, 0]) rotate([0, 0, -120]) pata(modo, angle=24);
+        // rotate_trans(radio) pata(modo, angle=17);
+        // rotate_trans(radio) translate([-28, -3, 0]) rotate([0, 0, 120]) pata(modo, angle=24);
+        // rotate_trans(radio) translate([-3, -28, 0]) rotate([0, 0, -120]) pata(modo, angle=24);
         rotate_trans(radio) patas(modo, MontaTotalDia);
         rotate_trans(radio) montura(modo, MontaTotalDia);
         if (hacer_aspa) rotate_trans(radio) aspa(modo);
@@ -272,6 +267,17 @@ module imprime_patas(modo, angle=24, count=1) {
     for (i=[1:count])
         translate([0, (i-count/2-0.5)*10, 0]) pata_centrada(modo,angle=angle);
 }
+
+module cylinder_with_hole(modo, h, r1, r2, hole, center=true) {
+    if (modo == "crea") {
+        cylinder(r1=r1, r2=r2, h=h, center=center);
+    }
+    if (modo == "hueco") {
+        cylinder(r=hole, h=h*1.5, center=center);
+    }
+}
+
+//cylinder_with_hole(r1=20, r2=10, h=15, hole=7);
 
 difference() { frame("crea"); frame("hueco"); }
 //difference() { imprime_patas("crea"); imprime_patas("hueco"); }
