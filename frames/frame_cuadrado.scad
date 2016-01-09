@@ -35,17 +35,12 @@ module montura(modo, TotalDia) {
             cylinder(d=TotalDia,h=Altura, center=true);
 
             rotate([0, 0, 180/N])
-            translate([-TotalDia/3, 0, 0])
-            cylinder(d=TotalDia, h=Altura, center=true);
+            translate([-TotalDia*0.75, 0, 0])
+            cube([TotalDia/6, TotalDia*1.8, Altura], center=true);
         }
 		// anillo alrededor del motor
-		difference() {
-			translate([0, 0, PerfilAlto/2])
-			cylinder(d=TotalDia,h=PerfilAlto, center=true);
-	
-			translate([0, 0, 2.5])
-			cylinder(d=TotalDia-2*PerfilAncho,h=PerfilAlto+2*Off, center=true);
-        }
+        translate([0, 0, PerfilAlto/2])
+        cylinder(d=TotalDia,h=PerfilAlto, center=true);
 	}
 	if (modo == "hueco") {
 	   // hueco central
@@ -58,6 +53,10 @@ module montura(modo, TotalDia) {
             rotate([0, 70, 0])
             translate([-4, 0, -9])
             cube([2.5, 7, 20], center=true);
+
+		// hueco anillo alrededor del motor
+       translate([0, 0, PerfilAlto/2+2*Off])
+       cylinder(d=TotalDia-2*PerfilAncho,h=PerfilAlto+2*Off, center=true);
 	}
 }
 
@@ -67,7 +66,7 @@ module patas(modo, MontaTotalDia) {
 	Agujero=1.5;
 	beta=180/N;
 	gamma=90-180/N;
-    for (angulo=[-1, 1])
+    for (angulo=[-1, 1, 4])
         rotate(beta+gamma*angulo)
         translate([-MontaTotalDia/1.7-Diametro/3, 0, Alto/2-0.5])
         cylinder_with_hole(modo, Alto, Diametro*1.30, Diametro, Agujero);
@@ -163,12 +162,17 @@ module rotate_trans(radio) {
 	children();
 }
 
-module frame(modo, radio=95, MontaTotalDia=25, hacer_aspa=false) {
+module frame(modo, radio=100, MontaTotalDia=25, hacer_aspa=false) {
     for_rotate() {
         lados(modo, radio, MontaTotalDia);
         multiwii(modo, 25.1, 5);
         diagonales(modo, radio, MontaTotalDia);
-        rotate_trans(radio) patas(modo, MontaTotalDia);
+        if (modo == "crea") {
+            rotate_trans(radio) hull() patas(modo, MontaTotalDia);
+        }
+        if (modo == "hueco") {
+            rotate_trans(radio) patas(modo, MontaTotalDia);
+        }
         rotate_trans(radio) montura(modo, MontaTotalDia);
         if (hacer_aspa) rotate_trans(radio) aspa(modo);
     }
