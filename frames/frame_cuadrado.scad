@@ -82,6 +82,41 @@ module patas(modo, MontaTotalDia) {
         }
 }
 
+
+module pata(modo) {
+    Agujero=1.5;
+	Diametro=5;
+    Grueso=1.5;
+	Alto=2;
+    Largo=5;
+    Largo2=61;
+    Ancho=Diametro*1.30;
+    Angle = 82;
+    OffsetBulto = 10;
+
+    if (modo == "to_borde") {
+        rotate([-Angle, 0, 0])
+            translate([0, -Largo, Alto/4])
+                children();
+    }
+    if (modo == "to_hole") {
+        translate([0, Largo, 0]) 
+            rotate([Angle, 180, 0])
+                children();
+    }
+    if (modo == "crea" || modo == "hueco") {
+        pata("to_borde") translate([0, 0, Alto/4]) cylinder_with_hole(modo, h=Alto, r1=Ancho*1.3/2, r2=Ancho*1.3/2, hole=Agujero);
+    }
+    if (modo == "crea") {
+        translate([0, Largo2/2, Grueso/2]) cube([Ancho, Largo2, Grueso], center=true);
+        translate([0, Largo2-OffsetBulto, 1.5*Grueso]) cube([Ancho/2, Ancho/2, Grueso], center=true);
+        pata("to_borde") translate([0, Largo/2, -Alto/2+Grueso]) cube([Ancho, Largo, Alto], center=true);
+    }
+    if (modo == "full") {
+        difference() { pata("crea"); pata("hueco"); }
+    }
+}   
+
 module cable(modo, alto, base) {
 	DiametroExterior=14;
 	Agujero=11;
@@ -175,19 +210,38 @@ module rotate_trans(radio) {
 	children();
 }
 
-module frame(modo, radio=100, MontaTotalDia=25, hacer_aspa=false) {
-    for_rotate() {
-        lados(modo, radio, MontaTotalDia);
-        multiwii(modo, 25.1, 5);
-        diagonales(modo, radio, MontaTotalDia);
-        if (modo == "crea") {
-            rotate_trans(radio) hull() patas(modo, MontaTotalDia);
+module frame(modo, radio=100, MontaTotalDia=25, hacer_aspa=false, hacer_patas=false) {
+    if (modo == "crea" || modo == "hueco") {
+        for_rotate() {
+            lados(modo, radio, MontaTotalDia);
+            multiwii(modo, 25.1, 5);
+            diagonales(modo, radio, MontaTotalDia);
+            if (modo == "crea") {
+                rotate_trans(radio) hull() patas(modo, MontaTotalDia);
+            }
+            if (modo == "hueco") {
+                rotate_trans(radio) patas(modo, MontaTotalDia);
+            }
+            rotate_trans(radio) montura(modo, MontaTotalDia);
+            if (hacer_aspa) rotate_trans(radio) aspa(modo);
         }
-        if (modo == "hueco") {
-            rotate_trans(radio) patas(modo, MontaTotalDia);
+    }
+    if (modo == "full") {
+        difference() {
+            frame("crea");
+            frame("hueco");
         }
-        rotate_trans(radio) montura(modo, MontaTotalDia);
-        if (hacer_aspa) rotate_trans(radio) aspa(modo);
+        if (hacer_patas) {
+            color("blue")
+            translate([0, 0, -1])
+            for_rotate()
+            rotate_trans(radio)
+            rotate(-180/N) {
+                rotate(45)  translate([0, -16, 0]) pata("to_hole") pata(modo);
+                rotate(180) translate([0, -16, 0]) pata("to_hole") pata(modo);
+                rotate(315) translate([0, -16, 0]) pata("to_hole") pata(modo);
+            }
+        }
     }
 }
 
@@ -200,6 +254,17 @@ module cylinder_with_hole(modo, h, r1, r2, hole, center=true) {
     }
 }
 
-difference() { frame("crea"); frame("hueco"); }
-//difference() { cable("crea", 5); cable("hueco", 1); }
-//difference() { montura("crea", 20); montura("hueco", 20); }
+
+module pack_de_patas(N=12) {
+    translate([-(N+1)/2*10, -30, 0])
+    for (i=[1:N]) {
+        translate([i*10, 0, 0]) pata("full");
+    }
+}
+
+
+frame("full");
+translate([0, 140, 0]) pack_de_patas(13);
+//frame("full", hacer_patas=true);
+//pack_de_patas(3);
+//pata("to_hole") pata("full");
