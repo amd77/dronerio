@@ -73,13 +73,16 @@ module patas(modo, MontaTotalDia) {
 }
 
 module cable(modo, alto, base) {
-	DiametroExterior=13;
-	Agujero=10;
+	DiametroExterior=14;
+	Agujero=11;
 	Alto=alto;
+    subalto = 1;
 
 	if (modo == "crea") {
 		translate([0, 0, alto-Alto/2])
 		cylinder(d=DiametroExterior, h=Alto, center=true);
+        // ala sombrero
+        cylinder(d=DiametroExterior*1.4, h=subalto, center=true);
 	}
 	if (modo == "hueco") {
 		// taladro central
