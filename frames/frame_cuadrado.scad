@@ -2,6 +2,12 @@ N=4;
 $fn=30;
 Off=1;
 
+module tuerca(m, center=true, k=1.15) {
+    if (m == 5.5) cylinder(d=6.0*k, h=2.3, $fn=6, center=center);
+    if (m == 7.0) cylinder(d=7.8*k, h=3.0, $fn=6, center=center);
+    if (m == 8.0) cylinder(d=8.8*k, h=3.7, $fn=6, center=center);
+}
+
 module distribuye_rotando(radio, n) {
 	for (i=[0:n-1]) rotate(i*360/n) translate([radio, 0, 0]) children();
 }
@@ -68,8 +74,12 @@ module patas(modo, MontaTotalDia) {
 	gamma=90-180/N;
     for (angulo=[-1, 1, 4])
         rotate(beta+gamma*angulo)
-        translate([-MontaTotalDia/1.7-Diametro/3, 0, Alto/2-0.5])
-        cylinder_with_hole(modo, Alto, Diametro*1.30, Diametro, Agujero);
+        translate([-MontaTotalDia/1.7-Diametro/3, 0, Alto/2-0.5]) {
+            cylinder_with_hole(modo, Alto, Diametro*1.30, Diametro, Agujero);
+            if (modo == "hueco")
+                translate([0, 0, Alto/2-2.3/2])
+                tuerca(5.5, h=2.3);
+        }
 }
 
 module cable(modo, alto, base) {
